@@ -1,8 +1,8 @@
-** River
+# River
 
 * There are two ways to run `lot` :
-  - `echo -e '2021-01-01,buy,10000.00,1.00000000\n2021-02-01,sell,20000.00,0.50000000' | mix lot fifo`
-  - 
+  1. `echo -e '2021-01-01,buy,10000.00,1.00000000\n2021-02-01,sell,20000.00,0.50000000' | mix lot fifo`
+  1. 
   ```
   aberhamhaile@Aberhams-MacBook-Pro river % mix lot
   Enter path to transaction log file (.csv/.txt)  input.txt
