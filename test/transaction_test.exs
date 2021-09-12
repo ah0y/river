@@ -6,7 +6,7 @@ defmodule TransactionTest do
   import River.Factory
 
   test "negatives aren't allowed" do
-    transaction_params = params_for(:transaction, quantity: -10, price: -10)
+    transaction_params = params_for(:transaction, quantity: -10, price: -10.00)
 
     changeset = Transaction.changeset(transaction_params)
 

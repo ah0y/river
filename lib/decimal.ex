@@ -21,6 +21,22 @@ defmodule BetterDecimal do
   end
 
   @impl true
+
+  def cast(decimal, params) when is_float(decimal) do
+    decimal =
+      decimal
+      |> Float.to_string()
+      |> Decimal.new()
+
+    precision = Keyword.get(params, :precision)
+
+    if abs(decimal.exp) <= precision do
+      {:ok, decimal}
+    else
+      :error
+    end
+  end
+
   def cast(decimal, params) do
     decimal = Decimal.new(decimal)
     precision = Keyword.get(params, :precision)
