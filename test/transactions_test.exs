@@ -14,7 +14,7 @@ defmodule TransactionsTest do
       |> IO.binstream(:line)
 
     assert capture_io(fn -> Transactions.process(stream, "fifo") end) =~
-             "before: [\n  %River.Transaction{\n    date: ~D[2021-01-01],\n    id: 1,\n    price: #Decimal<10000.00>,\n    quantity: #Decimal<1.00000000>,\n    tx_type: \"buy\"\n  },\n  %River.Transaction{\n    date: ~D[2021-02-01],\n    id: 2,\n    price: #Decimal<20000.00>,\n    quantity: #Decimal<0.50000000>,\n    tx_type: \"sell\"\n  }\n]\nafter: [\n  %River.Transaction{\n    date: ~D[2021-01-01],\n    id: 1,\n    price: #Decimal<10000.00>,\n    quantity: #Decimal<0.50000000>,\n    tx_type: \"buy\"\n  }\n]\n"
+             "1,2021-01-01,10000.00,0.50000000\n"
   end
 
   test "buys on the same day are collapsed" do

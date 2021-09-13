@@ -6,10 +6,9 @@ defmodule River.Transactions do
   def process(stream, option) do
     stream
     |> stream_to_transactions()
-    |> IO.inspect(label: "before")
     |> Enum.split_with(&(&1.tx_type == "buy"))
     |> sell(option)
-    |> IO.inspect(label: "after")
+    |> print()
   end
 
   defp stream_to_transactions(transactions_stream) do
@@ -23,6 +22,19 @@ defmodule River.Transactions do
     |> Enum.map(fn {params, index} -> Map.merge(params, %{id: index}) end)
     |> Enum.map(&Transaction.new/1)
   end
+
+  defp print(transactions) do
+    transactions
+    |> Enum.map(fn t ->
+      Map.from_struct(t) |> Map.values() |> rearrange_values |> Enum.join(",")
+    end)
+    |> Enum.join("\n")
+    |> IO.puts()
+
+    transactions
+  end
+
+  defp rearrange_values([date, id, price, quantity, _tx_type]), do: [id, date, price, quantity]
 
   defp execute_trades(sell, [buy | remaining_buys] = _buys) do
     cond do
