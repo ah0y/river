@@ -7,13 +7,12 @@ defmodule Mix.Tasks.Lot do
 
   def run([option] = args) when args != [] do
     if String.downcase(option) in ["fifo", "hifo"] do
+      stream = IO.stream()
+
+      Transactions.process(stream, option)
     else
       raise "please pass either 'fifo' or 'hifo' as an arg"
     end
-
-    stream = IO.stream()
-
-    Transactions.process(stream, option)
   end
 
   def run(_args) do
