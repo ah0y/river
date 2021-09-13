@@ -57,10 +57,16 @@ defmodule River.Transactions do
 
   defp merge_transactions(c, p) do
     Map.merge(c, p, fn k, v1, v2 ->
-      if k in [:quantity, :price] do
-        Decimal.add(v1, v2)
-      else
-        v1
+      case k do
+        :quantity ->
+          Decimal.add(v1, v2)
+
+        :price ->
+          Decimal.add(v1, v2)
+          |> Decimal.div(2)
+
+        _ ->
+          v1
       end
     end)
   end

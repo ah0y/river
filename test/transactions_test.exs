@@ -28,7 +28,7 @@ defmodule TransactionsTest do
 
     transactions = Transactions.process(stream, "fifo")
 
-    expected_price = Decimal.new("30000.00")
+    expected_price = Decimal.new("15000.00")
     expected_quantity = Decimal.new("1.50000000")
 
     assert [
