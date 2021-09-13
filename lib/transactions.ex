@@ -7,7 +7,6 @@ defmodule River.Transactions do
     stream
     |> stream_to_transactions()
     |> IO.inspect(label: "before")
-    |> sorted?()
     |> Enum.split_with(&(&1.tx_type == "buy"))
     |> sell(option)
     |> IO.inspect(label: "after")
@@ -17,6 +16,7 @@ defmodule River.Transactions do
     transactions_stream
     |> CSV.decode!(headers: @headers)
     |> Enum.to_list()
+    |> Enum.group_by(fn t -> [t.date, t.tx_type] end)
     |> Enum.reduce([], &maybe_collapse_transactions/2)
     |> Enum.reverse()
     |> Enum.with_index(1)
@@ -46,14 +46,23 @@ defmodule River.Transactions do
   end
 
   defp maybe_collapse_transactions(
-         %{date: current_date, tx_type: "buy"} = current_transaction,
-         [%{date: prev_date, tx_type: "buy"} = prev_transaction | rest]
-       )
-       when current_date == prev_date do
-    [merge_transactions(current_transaction, prev_transaction) | rest]
+         {[_date, "buy"], transactions},
+         acc
+       ) do
+    merged =
+      Enum.reduce(transactions, %{}, fn t, acc -> merge_transactions(t, acc) end)
+      |> update_average_price(transactions)
+
+    [merged | acc]
   end
 
-  defp maybe_collapse_transactions(transaction, rest), do: [transaction | rest]
+  defp maybe_collapse_transactions({_criteria, transactions}, acc) do
+    transactions ++ acc
+  end
+
+  defp update_average_price(merged, transactions) do
+    %{merged | price: Decimal.div(merged.price, length(transactions)) |> Decimal.round(2)}
+  end
 
   defp merge_transactions(c, p) do
     Map.merge(c, p, fn k, v1, v2 ->
@@ -63,21 +72,10 @@ defmodule River.Transactions do
 
         :price ->
           Decimal.add(v1, v2)
-          |> Decimal.div(2)
 
         _ ->
           v1
       end
     end)
-  end
-
-  defp sorted?(transactions) do
-    sorted_transactions = Enum.sort_by(transactions, & &1.date, {:asc, Date})
-
-    if sorted_transactions == transactions do
-      transactions
-    else
-      raise "transactions not sorted"
-    end
   end
 end

@@ -19,7 +19,7 @@ defmodule TransactionsTest do
 
   test "buys on the same day are collapsed" do
     {:ok, stream} =
-      "2021-01-01,buy,10000.00,1.00000000\n2021-01-01,buy,20000.00,0.50000000"
+      "2021-01-01,buy,10000.00,1.00000000\n2021-01-01,buy,20000.00,0.50000000\n2021-01-01,buy,20000.00,0.50000000"
       |> StringIO.open()
 
     stream =
@@ -28,8 +28,8 @@ defmodule TransactionsTest do
 
     transactions = Transactions.process(stream, "fifo")
 
-    expected_price = Decimal.new("15000.00")
-    expected_quantity = Decimal.new("1.50000000")
+    expected_price = Decimal.new("16666.67")
+    expected_quantity = Decimal.new("2.00000000")
 
     assert [
              %River.Transaction{
