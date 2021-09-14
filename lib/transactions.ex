@@ -43,8 +43,11 @@ defmodule River.Transactions do
         |> List.wrap()
         |> Enum.reduce(remaining_buys, &execute_trades/2)
 
-      sell.quantity <= buy.quantity ->
+      sell.quantity < buy.quantity ->
         [%{buy | quantity: Decimal.sub(buy.quantity, sell.quantity)} | remaining_buys]
+
+      sell.quantity == buy.quantity ->
+        remaining_buys
     end
   end
 

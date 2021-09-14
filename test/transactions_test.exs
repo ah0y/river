@@ -42,6 +42,20 @@ defmodule TransactionsTest do
            ] = transactions
   end
 
+  test "buys and sells can cancel each other oout" do
+    {:ok, stream} =
+      "2021-01-01,buy,10000.00,1.00000000\n2021-01-02,sell,20000.00,1.00000000"
+      |> StringIO.open()
+
+    stream =
+      stream
+      |> IO.binstream(:line)
+
+    transactions = Transactions.process(stream, "fifo")
+
+    assert [] = transactions
+  end
+
   test "fifo" do
     {:ok, stream} =
       "2021-01-01,buy,10000.00,1.00000000\n2021-01-02,buy,20000.00,1.00000000\n2021-02-01,sell,20000.00,1.50000000"
