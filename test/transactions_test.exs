@@ -53,7 +53,7 @@ defmodule TransactionsTest do
 
     transactions = Transactions.process(stream, "fifo")
 
-    assert [] = transactions
+    assert [] == transactions
   end
 
   test "fifo" do

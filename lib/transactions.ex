@@ -51,7 +51,12 @@ defmodule River.Transactions do
     end
   end
 
-  defp sell({buys, sells}, "fifo"), do: sells |> Enum.reduce(buys, &execute_trades/2)
+  defp sell({buys, sells}, "fifo") do
+    buys = Enum.sort_by(buys, & &1.date, {:asc, Date})
+
+    sells
+    |> Enum.reduce(buys, &execute_trades/2)
+  end
 
   defp sell({buys, sells}, "hifo") do
     buys = Enum.sort_by(buys, & &1.price, :desc)
