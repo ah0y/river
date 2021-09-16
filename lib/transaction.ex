@@ -7,8 +7,8 @@ defmodule River.Transaction do
     field(:id, :id)
     field(:date, :date)
     field(:tx_type, :string)
-    field(:price, BetterDecimal, precision: 2)
-    field(:quantity, BetterDecimal, precision: 8)
+    field(:price, BetterDecimal, scale: 2)
+    field(:quantity, BetterDecimal, scale: 8)
   end
 
   @required_fields ~w(id date tx_type price quantity)a

@@ -1,7 +1,7 @@
 defmodule BetterDecimal do
   use Ecto.ParameterizedType
 
-  @opts ~w(precision field schema)a
+  @opts ~w(scale field schema)a
 
   @impl true
   def type(_params), do: :decimal
@@ -28,9 +28,9 @@ defmodule BetterDecimal do
       |> Float.to_string()
       |> Decimal.new()
 
-    precision = Keyword.get(params, :precision)
+    scale = Keyword.get(params, :scale)
 
-    if abs(decimal.exp) <= precision do
+    if abs(decimal.exp) <= scale do
       {:ok, decimal}
     else
       :error
@@ -39,9 +39,9 @@ defmodule BetterDecimal do
 
   def cast(decimal, params) do
     decimal = Decimal.new(decimal)
-    precision = Keyword.get(params, :precision)
+    scale = Keyword.get(params, :scale)
 
-    if abs(decimal.exp) <= precision do
+    if abs(decimal.exp) <= scale do
       {:ok, decimal}
     else
       :error

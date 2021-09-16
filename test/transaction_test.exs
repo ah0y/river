@@ -31,28 +31,43 @@ defmodule TransactionTest do
   end
 
   test "price has a scale of 2" do
-    transaction_params = params_for(:transaction, price: "10.123")
+    transaction_params = params_for(:transaction, price: "10.123", quantity: "10.123456789")
 
     changeset = Transaction.changeset(transaction_params)
 
     assert changeset.errors ==
              [
-               {:price,
+               {
+                 :price,
+                 {
+                   "is invalid",
+                   [
+                     type: {
+                       :parameterized,
+                       BetterDecimal,
+                       [
+                         scale: 2,
+                         field: :price,
+                         schema: River.Transaction
+                       ]
+                     },
+                     validation: :cast
+                   ]
+                 }
+               },
+               {:quantity,
                 {"is invalid",
                  [
                    type:
                      {:parameterized, BetterDecimal,
-                      [precision: 2, field: :price, schema: River.Transaction]},
+                      [scale: 8, field: :quantity, schema: River.Transaction]},
                    validation: :cast
                  ]}}
              ]
   end
 
   test "all fields are required" do
-    transaction_params =
-      params_for(:transaction, tx_type: nil, date: nil, quantity: nil, price: nil, id: nil)
-
-    changeset = Transaction.changeset(transaction_params)
+    changeset = Transaction.changeset()
 
     assert changeset.errors == [
              {:id, {"can't be blank", [validation: :required]}},

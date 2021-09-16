@@ -42,7 +42,7 @@ defmodule TransactionsTest do
            ] = transactions
   end
 
-  test "buys and sells can cancel each other oout" do
+  test "buys and sells can cancel each other out" do
     {:ok, stream} =
       "2021-01-01,buy,10000.00,1.00000000\n2021-01-02,sell,20000.00,1.00000000"
       |> StringIO.open()
